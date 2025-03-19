@@ -48,6 +48,25 @@ const MAX_DEPS_COUNT: u8 = 10;
 const MIN_APPROVALS_COUNT: u8 = 1;
 const MAX_APPROVALS_COUNT: u8 = 10;
 
+/// Serializes the deploy body
+fn serialize_body(payment: &ExecutableDeployItem, session: &ExecutableDeployItem) -> Vec<u8> {
+    let mut buffer = Vec::with_capacity(payment.serialized_length() + session.serialized_length());
+    payment
+        .write_bytes(&mut buffer)
+        .unwrap_or_else(|error| panic!("should serialize payment code: {}", error));
+    session
+        .write_bytes(&mut buffer)
+        .unwrap_or_else(|error| panic!("should serialize session code: {}", error));
+    buffer
+}
+
+/// Serializes the deploy header
+fn serialize_header(header: &DeployHeader) -> Vec<u8> {
+    header
+        .to_bytes()
+        .unwrap_or_else(|error| panic!("should serialize deploy header: {}", error))
+}
+
 /// Returns a sample `Deploy`, given the input data.
 fn make_deploy_sample(
     session: Sample<ExecutableDeployItem>,
@@ -60,18 +79,23 @@ fn make_deploy_sample(
     let (payment_label, payment, payment_validity) = payment.destructure();
     let (session_label, session, session_validity) = session.destructure();
 
+    let body_bytes = serialize_body(&payment, &session);
+    let body_hash = Digest::hash(body_bytes);
+
     let header = DeployHeader::new(
         PublicKey::from(&main_key[0]),
         Timestamp::from_str("2021-05-04T14:20:35.104Z").unwrap(),
         ttl,
         2,
-        Digest::hash([1u8; 32]),
+        body_hash,
         dependencies,
         "mainnet".into(),
     );
 
-    let hash = DeployHash::new(Digest::hash([1u8; 32]));
-    let deploy = Deploy::new(hash, header, payment, session);
+    let header_bytes = serialize_header(&header);
+    let deploy_hash = DeployHash::new(Digest::hash(header_bytes));
+
+    let deploy = Deploy::new(deploy_hash, header, payment, session);
     let transaction = Transaction::from_deploy(deploy);
 
     let mut sample = Sample::new(
