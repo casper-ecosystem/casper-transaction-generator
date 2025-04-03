@@ -1,5 +1,6 @@
 use casper_types::{
-    runtime_args, AccessRights, RuntimeArgs, TransactionArgs, TransactionEntryPoint, TransactionScheduling, TransactionTarget, URef, U512
+    runtime_args, AccessRights, RuntimeArgs, TransactionArgs, TransactionEntryPoint,
+    TransactionScheduling, TransactionTarget, URef, U512,
 };
 
 use crate::sample::Sample;
@@ -10,7 +11,7 @@ use crate::test_data::TransactionV1Meta;
 #[derive(Clone, Debug)]
 struct Burn {
     source: URef,
-    amount: U512
+    amount: U512,
 }
 
 impl Burn {
@@ -29,24 +30,14 @@ impl From<Burn> for RuntimeArgs {
 }
 
 // Generate a native burn sample for every possible combination of parameters
-fn native_burn_samples(
-    source_urefs: &[URef],
-    burn_amounts: &[U512],
-) -> Vec<Sample<Burn>> {
+fn native_burn_samples(source_urefs: &[URef], burn_amounts: &[U512]) -> Vec<Sample<Burn>> {
     let mut samples: Vec<Sample<Burn>> = vec![];
-    
+
     for source in source_urefs {
         for amount in burn_amounts {
-            let burn = Burn::new(
-                *source,
-                *amount,
-            );
+            let burn = Burn::new(*source, *amount);
 
-            samples.push(Sample::new(
-                "native_burn_v1",
-                burn,
-                true
-            ));
+            samples.push(Sample::new("native_burn_v1", burn, true));
         }
     }
 
@@ -66,11 +57,7 @@ pub(crate) fn valid() -> Vec<Sample<TransactionV1Meta>> {
         URef::new([8; 32], AccessRights::READ_ADD_WRITE),
     ];
 
-    let amounts = vec![
-        U512::from(0),
-        U512::from(1_000_000),
-        U512::MAX,
-    ];
+    let amounts = vec![U512::from(0), U512::from(1_000_000), U512::MAX];
 
     super::make_samples_with_schedulings(
         native_burn_samples(&sources, &amounts),
@@ -88,15 +75,9 @@ pub(crate) fn invalid() -> Vec<Sample<TransactionV1Meta>> {
         "source" => URef::new([8; 32], AccessRights::READ_ADD_WRITE),
     };
 
-    let invalid_args = vec![Sample::new(
-        "missing_source",
-        missing_source,
-        false,
-    ),Sample::new(
-        "missing_amount",
-        missing_amount,
-        false,
-    )
+    let invalid_args = vec![
+        Sample::new("missing_source", missing_source, false),
+        Sample::new("missing_amount", missing_amount, false),
     ];
 
     invalid_args

@@ -439,11 +439,7 @@ pub(crate) fn native_withdraw_bid_samples<R: Rng>(rng: &mut R) -> Vec<Sample<Tra
 }
 
 pub(crate) fn native_burn_samples<R: Rng>(rng: &mut R) -> Vec<Sample<Transaction>> {
-    native_samples(
-        rng,
-        native_v1::burn::valid,
-        native_v1::burn::invalid,
-    )
+    native_samples(rng, native_v1::burn::valid, native_v1::burn::invalid)
 }
 
 pub(crate) fn native_samples<R: Rng>(
