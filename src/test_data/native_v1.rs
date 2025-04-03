@@ -1,5 +1,5 @@
 use casper_types::{
-    EraId, RuntimeArgs, Timestamp, TransactionArgs, TransactionEntryPoint, TransactionScheduling,
+    RuntimeArgs, TransactionArgs, TransactionEntryPoint, TransactionScheduling,
     TransactionTarget,
 };
 
@@ -15,6 +15,7 @@ pub mod redelegate;
 pub mod transfer;
 pub mod undelegate;
 pub mod withdraw_bid;
+pub mod burn;
 
 pub(crate) fn make_samples_with_schedulings<T: Into<RuntimeArgs> + Clone>(
     from_samples: Vec<Sample<T>>,
@@ -42,16 +43,8 @@ pub(crate) fn make_samples_with_schedulings<T: Into<RuntimeArgs> + Clone>(
     samples
 }
 
-fn make_sample_schedulings() -> [(TransactionScheduling, &'static str); 3] {
+fn make_sample_schedulings() -> [(TransactionScheduling, &'static str); 1] {
     [
         (TransactionScheduling::Standard, "standard_scheduling"),
-        (
-            TransactionScheduling::FutureEra(EraId::new(6000)),
-            "future_era",
-        ),
-        (
-            TransactionScheduling::FutureTimestamp(Timestamp::from(6000)),
-            "future_timestamp",
-        ),
     ]
 }
