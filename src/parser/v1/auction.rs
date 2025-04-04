@@ -6,7 +6,7 @@ use casper_types::{
 
 use crate::{
     ledger::Element,
-    parser::runtime_args::{identity, parse_amount, parse_optional_arg},
+    parser::runtime_args::{identity, parse_amount, try_parse_arg},
 };
 
 use super::{parse_bytesrepr_args, v1_type, TransactionV1Meta};
@@ -133,10 +133,21 @@ pub(crate) fn parse_cancel_reservations(item: &TransactionV1Meta) -> Vec<Element
     parse_auction_v1(item, arg_parser)
 }
 
+pub(crate) fn parse_burn(item: &TransactionV1Meta) -> Vec<Element> {
+    let arg_parser = |args| {
+        let mut elements = vec![];
+        elements.extend(parse_source_uref(args));
+        elements.extend(parse_amount(args));
+        elements
+    };
+    parse_auction_v1(item, arg_parser)
+}
+
 const DELEGATOR_ARG_KEY: &str = "delegator";
 const VALIDATOR_ARG_KEY: &str = "validator";
 const NEW_VALIDATOR_ARG_KEY: &str = "new_validator";
 const PUBLIC_KEY_ARG_KEY: &str = "public_key";
+const SOURCE_ARG_KEY: &str = "source";
 const NEW_PUBLIC_KEY_ARG_KEY: &str = "new_public_key";
 const DELEGATION_RATE_KEY_ARG_KEY: &str = "delegation_rate";
 const MIN_DELEGATION_AMOUNT_KEY_ARG_KEY: &str = "minimum_delegation_amount";
@@ -147,31 +158,35 @@ const RESERVATIONS_ARG_KEY: &str = "reservations";
 const DELEGATORS_ARG_KEY: &str = "delegators";
 
 fn parse_delegator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, DELEGATOR_ARG_KEY, "delegator", false, identity)
+    try_parse_arg(args, DELEGATOR_ARG_KEY, "delegator", false, identity)
 }
 
 fn parse_validator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, VALIDATOR_ARG_KEY, "validator", false, identity)
+    try_parse_arg(args, VALIDATOR_ARG_KEY, "validator", false, identity)
 }
 
 fn parse_old_validator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, VALIDATOR_ARG_KEY, "old", false, identity)
+    try_parse_arg(args, VALIDATOR_ARG_KEY, "old", false, identity)
 }
 
 fn parse_new_validator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, NEW_VALIDATOR_ARG_KEY, "new", false, identity)
+    try_parse_arg(args, NEW_VALIDATOR_ARG_KEY, "new", false, identity)
+}
+
+fn parse_source_uref(args: &RuntimeArgs) -> Option<Element> {
+    try_parse_arg(args, SOURCE_ARG_KEY, "source", false, identity)
 }
 
 fn parse_public_key(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, PUBLIC_KEY_ARG_KEY, "pk", false, identity)
+    try_parse_arg(args, PUBLIC_KEY_ARG_KEY, "pk", false, identity)
 }
 
 fn parse_new_public_key(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, NEW_PUBLIC_KEY_ARG_KEY, "new pk", false, identity)
+    try_parse_arg(args, NEW_PUBLIC_KEY_ARG_KEY, "new pk", false, identity)
 }
 
 fn parse_delegation_rate(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(
+    try_parse_arg(
         args,
         DELEGATION_RATE_KEY_ARG_KEY,
         "deleg. rate",
@@ -181,7 +196,7 @@ fn parse_delegation_rate(args: &RuntimeArgs) -> Option<Element> {
 }
 
 fn parse_min_delegation_amount(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(
+    try_parse_arg(
         args,
         MIN_DELEGATION_AMOUNT_KEY_ARG_KEY,
         "min. amount",
@@ -191,7 +206,7 @@ fn parse_min_delegation_amount(args: &RuntimeArgs) -> Option<Element> {
 }
 
 fn parse_max_delegation_amount(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(
+    try_parse_arg(
         args,
         MAX_DELEGATION_AMOUNT_KEY_ARG_KEY,
         "max. amount",
@@ -201,11 +216,11 @@ fn parse_max_delegation_amount(args: &RuntimeArgs) -> Option<Element> {
 }
 
 fn parse_reserved_slots(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, RESERVED_SLOTS_ARG_KEY, "rsrvd slots", false, identity)
+    try_parse_arg(args, RESERVED_SLOTS_ARG_KEY, "rsrvd slots", false, identity)
 }
 
 fn parse_validator_public_key(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, VALIDATOR_PK_ARG_KEY, "validtr pk", false, identity)
+    try_parse_arg(args, VALIDATOR_PK_ARG_KEY, "validtr pk", false, identity)
 }
 
 fn parse_reservations(args: &RuntimeArgs) -> Vec<Element> {

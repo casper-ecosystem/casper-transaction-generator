@@ -12,9 +12,9 @@ use crate::{
 };
 
 use auction::{
-    parse_activate_bid, parse_add_bid, parse_add_reservations, parse_cancel_reservations,
-    parse_change_bid_pk, parse_delegation, parse_redelegation, parse_undelegation,
-    parse_withdraw_bid,
+    parse_activate_bid, parse_add_bid, parse_add_reservations, parse_burn,
+    parse_cancel_reservations, parse_change_bid_pk, parse_delegation, parse_redelegation,
+    parse_undelegation, parse_withdraw_bid,
 };
 use casper_types::{
     bytesrepr::Bytes,
@@ -144,10 +144,13 @@ pub(crate) fn parse_v1_meta(v1: &TransactionV1) -> Vec<Element> {
             TransactionEntryPoint::ChangeBidPublicKey => parse_change_bid_pk(&meta),
             TransactionEntryPoint::AddReservations => parse_add_reservations(&meta),
             TransactionEntryPoint::CancelReservations => parse_cancel_reservations(&meta),
-            _ => panic!(
-                "Generator doesn't support the native entrypoint '{}'",
-                meta.entry_point
-            ),
+            TransactionEntryPoint::Burn => parse_burn(&meta),
+            TransactionEntryPoint::Call => {
+                panic!("TransactionEntryPoint::Call is unsupported in native context")
+            }
+            TransactionEntryPoint::Custom(_) => {
+                panic!("TransactionEntryPoint::Custom is unsupported in native context")
+            }
         },
         TransactionTarget::Stored { .. } => {
             let mut elements: Vec<Element> = v1_type(&meta);

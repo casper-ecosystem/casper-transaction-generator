@@ -39,7 +39,7 @@ pub(crate) fn parse_runtime_args(phase: &TxnPhase, ra: &RuntimeArgs) -> Vec<Elem
     elements
 }
 
-pub(crate) fn parse_optional_arg<F: Fn(String) -> String>(
+pub(crate) fn try_parse_arg<F: Fn(String) -> String>(
     args: &RuntimeArgs,
     key: &str,
     label: &str,
@@ -69,15 +69,13 @@ pub(crate) fn parse_optional_arg<F: Fn(String) -> String>(
 /// * to (Option<AccountHash>)
 /// * ID
 pub(crate) fn parse_transfer_args(args: &RuntimeArgs) -> Vec<Element> {
-    let mut elements: Vec<Element> = parse_optional_arg(args, ARG_TO, "recipient", false, identity)
+    let mut elements: Vec<Element> = try_parse_arg(args, ARG_TO, "recipient", false, identity)
         .into_iter()
         .collect();
-    elements.extend(parse_optional_arg(args, ARG_SOURCE, "from", true, identity));
-    elements.extend(parse_optional_arg(
-        args, ARG_TARGET, "target", false, identity,
-    ));
+    elements.extend(try_parse_arg(args, ARG_SOURCE, "from", true, identity));
+    elements.extend(try_parse_arg(args, ARG_TARGET, "target", false, identity));
     elements.extend(parse_amount(args));
-    elements.extend(parse_optional_arg(args, ARG_ID, "ID", true, identity));
+    elements.extend(try_parse_arg(args, ARG_ID, "ID", true, identity));
     elements
 }
 
@@ -94,7 +92,7 @@ fn parse_motes(args: &RuntimeArgs, ledger_label: &str) -> Option<Element> {
         let motes_amount = U512::from_dec_str(&amount_str).unwrap();
         format_amount(motes_amount)
     };
-    parse_optional_arg(args, mint::ARG_AMOUNT, ledger_label, false, f)
+    try_parse_arg(args, mint::ARG_AMOUNT, ledger_label, false, f)
 }
 
 pub(crate) fn format_amount(motes: U512) -> String {

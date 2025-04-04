@@ -4,7 +4,7 @@ use crate::{
     ledger::{Element, TxnPhase},
     parser::{
         deploy::{deploy_type, parse_amount},
-        runtime_args::{identity, parse_optional_arg},
+        runtime_args::{identity, try_parse_arg},
     },
 };
 
@@ -162,19 +162,19 @@ fn has_redelegate_arg(item: &ExecutableDeployItem) -> bool {
 }
 
 fn parse_delegator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, DELEGATOR_ARG_KEY, "delegator", false, identity)
+    try_parse_arg(args, DELEGATOR_ARG_KEY, "delegator", false, identity)
 }
 
 fn parse_validator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, VALIDATOR_ARG_KEY, "validator", false, identity)
+    try_parse_arg(args, VALIDATOR_ARG_KEY, "validator", false, identity)
 }
 
 fn parse_old_validator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, VALIDATOR_ARG_KEY, "old", false, identity)
+    try_parse_arg(args, VALIDATOR_ARG_KEY, "old", false, identity)
 }
 
 fn parse_new_validator(args: &RuntimeArgs) -> Option<Element> {
-    parse_optional_arg(args, NEW_VALIDATOR_ARG_KEY, "new", false, identity)
+    try_parse_arg(args, NEW_VALIDATOR_ARG_KEY, "new", false, identity)
 }
 
 fn is_entrypoint(item: &ExecutableDeployItem, expected: &str) -> bool {
