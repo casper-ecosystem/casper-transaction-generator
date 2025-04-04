@@ -1,6 +1,5 @@
 use casper_types::{
-    EraId, RuntimeArgs, Timestamp, TransactionArgs, TransactionEntryPoint, TransactionScheduling,
-    TransactionTarget,
+    RuntimeArgs, TransactionArgs, TransactionEntryPoint, TransactionScheduling, TransactionTarget,
 };
 
 use super::{Sample, TransactionV1Meta};
@@ -8,6 +7,7 @@ use super::{Sample, TransactionV1Meta};
 pub mod activate_bid;
 pub mod add_bid;
 pub mod add_reservations;
+pub mod burn;
 pub mod cancel_reservations;
 pub mod change_bid_pk;
 pub mod delegate;
@@ -42,16 +42,6 @@ pub(crate) fn make_samples_with_schedulings<T: Into<RuntimeArgs> + Clone>(
     samples
 }
 
-fn make_sample_schedulings() -> [(TransactionScheduling, &'static str); 3] {
-    [
-        (TransactionScheduling::Standard, "standard_scheduling"),
-        (
-            TransactionScheduling::FutureEra(EraId::new(6000)),
-            "future_era",
-        ),
-        (
-            TransactionScheduling::FutureTimestamp(Timestamp::from(6000)),
-            "future_timestamp",
-        ),
-    ]
+fn make_sample_schedulings() -> [(TransactionScheduling, &'static str); 1] {
+    [(TransactionScheduling::Standard, "standard_scheduling")]
 }

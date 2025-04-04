@@ -72,6 +72,8 @@ fn drop_key_type_prefix(cl_in: String) -> String {
                 Key::BidAddr(_) => "bid-addr-",
                 Key::SmartContract(_) => "package-",
                 Key::BlockGlobal(addr) => match addr {
+                    BlockGlobalAddr::ProtocolVersion => "protocol-version-",
+                    BlockGlobalAddr::AddressableEntity => "addressable-entity",
                     BlockGlobalAddr::BlockTime => "block-time-",
                     BlockGlobalAddr::MessageCount => "block-message-count-",
                 },

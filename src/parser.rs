@@ -64,6 +64,7 @@ fn transaction_v1_type(t: &TransactionV1) -> Element {
 
     let v1_type = match entry_point {
         TransactionEntryPoint::Call | TransactionEntryPoint::Custom(_) => "Contract execution",
+        TransactionEntryPoint::Burn => "Burn",
         TransactionEntryPoint::Transfer => "Transfer",
         TransactionEntryPoint::AddBid => "Add Bid",
         TransactionEntryPoint::WithdrawBid => "Withdraw Bid",

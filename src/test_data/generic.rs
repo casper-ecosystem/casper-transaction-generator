@@ -418,11 +418,11 @@ fn sample_keys() -> Vec<Key> {
     let addressable_entity_system = Key::AddressableEntity(EntityAddr::new_system([1u8; 32]));
     let byte_code = Key::ByteCode(ByteCodeAddr::Empty);
     let message_topic = Key::Message(MessageAddr::new_topic_addr(
-        [1u8; 32],
+        EntityAddr::new_account([1u8; 32]),
         TopicNameHash::new([1u8; 32]),
     ));
     let message = Key::Message(MessageAddr::new_message_addr(
-        [1u8; 32],
+        EntityAddr::new_account([1u8; 32]),
         TopicNameHash::new([1u8; 32]),
         1,
     ));
