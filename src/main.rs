@@ -22,6 +22,7 @@ use test_data::{
 
 pub mod checksummed_hex;
 mod deterministic;
+mod feature_pin;
 mod ledger;
 mod message;
 mod parser;
@@ -247,6 +248,8 @@ fn main() {
         ));
         id += 1;
     }
+
+    feature_pin::pin();
 
     println!("{}", serde_json::to_string_pretty(&data).unwrap());
 }

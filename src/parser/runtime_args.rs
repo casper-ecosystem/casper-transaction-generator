@@ -64,6 +64,7 @@ pub(crate) fn parse_optional_arg<F: Fn(String) -> String>(
 /// * source
 /// * target
 /// * amount
+///
 /// Optional fields:
 /// * to (Option<AccountHash>)
 /// * ID

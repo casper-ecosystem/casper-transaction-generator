@@ -26,6 +26,9 @@ check-against-old: test-vectors
 check:
 	$(CARGO) check
 
+check-format:
+	$(CARGO) fmt --all -- --check
+
 format:
 	$(CARGO) fmt
 

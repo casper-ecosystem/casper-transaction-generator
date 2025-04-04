@@ -224,7 +224,6 @@ impl LedgerPageView {
     }
 }
 
-///
 struct LedgerView {
     pages: Vec<LedgerPageView>,
 }
@@ -268,7 +267,6 @@ type LedgerCallback = Rc<dyn Fn(&Ledger) -> Vec<String>>;
 
 #[derive(Clone)]
 #[allow(unused)]
-
 pub(crate) struct LimitedLedgerConfig {
     page_limit: u8,
     on_regular: LedgerCallback,
@@ -328,6 +326,7 @@ pub(super) struct ZondaxRepr {
     output_expert: Vec<String>,
 }
 
+#[allow(dead_code)]
 /// Maps `Deploy` structure to the expected JSON representation.
 pub(super) fn deploy_to_json(
     index: usize,
