@@ -82,6 +82,17 @@ pub(crate) fn sample_module_bytes(ra: RuntimeArgs) -> Sample<ExecutableDeployIte
     )
 }
 
+pub(crate) fn sample_large_module_bytes(ra: RuntimeArgs) -> Sample<ExecutableDeployItem> {
+    Sample::new(
+        "type_large_module_bytes",
+        ExecutableDeployItem::ModuleBytes {
+            module_bytes: Bytes::from([1u8; 16384].to_vec()),
+            args: ra,
+        },
+        true,
+    )
+}
+
 // Prepends `entrypoint` to the current label of `sample`.
 pub(crate) fn prepend_label(
     sample: Sample<ExecutableDeployItem>,

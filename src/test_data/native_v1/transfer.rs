@@ -21,7 +21,7 @@ pub(crate) fn valid() -> Vec<Sample<TransactionV1Meta>> {
     let amounts = vec![amount_min, amount_mid, amount_max];
     let id_min = u64::MIN;
     let id_max = u64::MAX;
-    let transfer_id = vec![id_min, id_max];
+    let transfer_id = vec![Some(id_min), Some(id_max), None];
     let targets = vec![
         TransferTarget::bytes(),
         TransferTarget::uref(),
@@ -57,10 +57,6 @@ pub(crate) fn invalid() -> Vec<Sample<TransactionV1Meta>> {
         "id" => 1u64,
         "target" => URef::new(UREF_ADDR, AccessRights::READ),
     };
-    let missing_required_id: RuntimeArgs = runtime_args! {
-        "amount" => U512::from(100000000u64),
-        "target" => URef::new(UREF_ADDR, AccessRights::READ),
-    };
     let missing_required_target: RuntimeArgs = runtime_args! {
         "amount" => U512::from(100000000u64),
         "id" => 1u64,
@@ -73,7 +69,6 @@ pub(crate) fn invalid() -> Vec<Sample<TransactionV1Meta>> {
 
     let invalid_transfer_args: Vec<Sample<RuntimeArgs>> = vec![
         Sample::new("missing_amount", missing_required_amount, false),
-        Sample::new("missing_id", missing_required_id, false),
         Sample::new("missing_target", missing_required_target, false),
         Sample::new("invalid_type_amount", invalid_amount_type, false),
     ];

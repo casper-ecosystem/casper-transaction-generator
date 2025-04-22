@@ -12,12 +12,12 @@ use super::commons::UREF_ADDR;
 pub(crate) struct NativeTransfer {
     target: TransferTarget,
     amount: U512,
-    id: u64,
+    id: Option<u64>,
     source: TransferSource,
 }
 
 impl NativeTransfer {
-    pub fn new(target: TransferTarget, amount: U512, id: u64, source: TransferSource) -> Self {
+    pub fn new(target: TransferTarget, amount: U512, id: Option<u64>, source: TransferSource) -> Self {
         NativeTransfer {
             target,
             amount,
@@ -31,7 +31,9 @@ impl From<NativeTransfer> for RuntimeArgs {
     fn from(nt: NativeTransfer) -> Self {
         let mut ra = RuntimeArgs::new();
         ra.insert("amount", nt.amount).unwrap();
-        ra.insert("id", Some(nt.id)).unwrap();
+        if let Some(id) = nt.id {
+            ra.insert("id", Some(id)).unwrap();
+        }
         if let TransferSource::URef(uref) = nt.source {
             ra.insert("source", uref).unwrap();
         }
@@ -147,7 +149,7 @@ impl TransferTarget {
 /// for every combination of them creates a `NativeTransfer` sample.
 pub(crate) fn native_transfer_samples(
     amounts: &[U512],
-    transfer_id: &[u64],
+    transfer_id: &[Option<u64>],
     targets: &[TransferTarget],
     sources: &[TransferSource],
 ) -> Vec<Sample<NativeTransfer>> {
@@ -157,7 +159,12 @@ pub(crate) fn native_transfer_samples(
         for id in transfer_id {
             for target in targets {
                 for source in sources {
-                    let label = format!("native_transfer_{}_{}", target.label(), source.label());
+                    let id_label = if let Some(id) = *id {
+                        id.to_string()
+                    } else {
+                        "none".into()
+                    };
+                    let label = format!("native_transfer_{}_{}_id_{id_label}", target.label(), source.label());
                     let nt = NativeTransfer::new(target.clone(), *amount, *id, source.clone());
                     let sample = Sample::new(label, nt, true);
                     samples.push(sample);
@@ -177,7 +184,7 @@ pub(super) fn valid() -> Vec<Sample<ExecutableDeployItem>> {
     let amounts = vec![amount_min, amount_mid, amount_max];
     let id_min = u64::MIN;
     let id_max = u64::MAX;
-    let transfer_id = vec![id_min, id_max];
+    let transfer_id = vec![Some(id_min), Some(id_max), None];
     let targets = vec![
         TransferTarget::bytes(),
         TransferTarget::uref(),
