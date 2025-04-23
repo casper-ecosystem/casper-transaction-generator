@@ -172,11 +172,26 @@ pub(crate) fn parse_v1_meta(v1: &TransactionV1) -> Vec<Element> {
             }
             elements
         }
-        TransactionTarget::Session { .. } => {
+        TransactionTarget::Session { module_bytes, .. } => {
+            // Session transactions with wasm size exceeding 16kb will not display
+            // any extra information due to hardware limitations.
+            if module_bytes.len() >= 16_384 {
+                return vec![];
+            }
+
             let mut elements = v1_type(&meta);
             match meta.args {
                 TransactionArgs::Named(args) => {
-                    elements.extend(parse_runtime_args_v1(&args));
+                    if is_system_payment(module_bytes) {
+                        elements.extend(parse_fee(&args));
+                        let args_sans_amount = remove_amount_arg(args.clone());
+                        if !args_sans_amount.is_empty() {
+                            elements.extend(parse_runtime_args_v1(&args));
+                        }
+                    } else {
+                        elements.extend(parse_amount(&args));
+                        elements.extend(parse_runtime_args_v1(&args));
+                    }
                 }
                 TransactionArgs::Bytesrepr(bytes) => {
                     elements.extend(parse_bytesrepr_args(bytes));
