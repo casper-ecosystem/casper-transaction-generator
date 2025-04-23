@@ -175,7 +175,7 @@ pub(crate) fn parse_v1_meta(v1: &TransactionV1) -> Vec<Element> {
         TransactionTarget::Session { module_bytes, .. } => {
             // Session transactions with wasm size exceeding 16kb will not display
             // any extra information due to hardware limitations.
-            if module_bytes.len() > 16_384 {
+            if module_bytes.len() > 16_383 {
                 return vec![];
             }
 
