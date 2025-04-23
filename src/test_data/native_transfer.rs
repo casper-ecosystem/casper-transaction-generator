@@ -17,7 +17,12 @@ pub(crate) struct NativeTransfer {
 }
 
 impl NativeTransfer {
-    pub fn new(target: TransferTarget, amount: U512, id: Option<u64>, source: TransferSource) -> Self {
+    pub fn new(
+        target: TransferTarget,
+        amount: U512,
+        id: Option<u64>,
+        source: TransferSource,
+    ) -> Self {
         NativeTransfer {
             target,
             amount,
@@ -164,7 +169,11 @@ pub(crate) fn native_transfer_samples(
                     } else {
                         "none".into()
                     };
-                    let label = format!("native_transfer_{}_{}_id_{id_label}", target.label(), source.label());
+                    let label = format!(
+                        "native_transfer_{}_{}_id_{id_label}",
+                        target.label(),
+                        source.label()
+                    );
                     let nt = NativeTransfer::new(target.clone(), *amount, *id, source.clone());
                     let sample = Sample::new(label, nt, true);
                     samples.push(sample);
