@@ -173,7 +173,13 @@ pub(crate) fn parse_v1_meta(v1: &TransactionV1) -> Vec<Element> {
             elements
         }
         TransactionTarget::Session { module_bytes, .. } => {
-            let mut elements: Vec<Element> = v1_type(&meta);
+            // Session transactions with wasm size exceeding 16kb will not display
+            // any extra information due to hardware limitations.
+            if module_bytes.len() > 16_384 {
+                return vec![];
+            }
+
+            let mut elements = v1_type(&meta);
             match meta.args {
                 TransactionArgs::Named(args) => {
                     if is_system_payment(module_bytes) {
