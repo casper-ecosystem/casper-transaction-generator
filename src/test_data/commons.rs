@@ -86,7 +86,7 @@ pub(crate) fn sample_large_module_bytes(ra: RuntimeArgs) -> Sample<ExecutableDep
     Sample::new(
         "type_large_module_bytes",
         ExecutableDeployItem::ModuleBytes {
-            module_bytes: Bytes::from([1u8; 16384].to_vec()),
+            module_bytes: Bytes::from([1u8; 16385].to_vec()),
             args: ra,
         },
         true,
