@@ -3,8 +3,10 @@ mod runtime_args;
 mod utils;
 pub(crate) mod v1;
 
-use casper_types::{Deploy, TransactionEntryPoint, TransactionV1};
-use v1::{parse_v1_approvals, parse_v1_meta, parse_v1_payload, ENTRY_POINT_MAP_KEY};
+use casper_types::{Deploy, TransactionEntryPoint, TransactionTarget, TransactionV1};
+use v1::{
+    parse_v1_approvals, parse_v1_meta, parse_v1_payload, TransactionV1Meta, ENTRY_POINT_MAP_KEY,
+};
 
 use crate::{
     checksummed_hex,
@@ -37,6 +39,16 @@ pub(crate) fn parse_v1(v1: TransactionV1) -> Vec<Element> {
         "Txn hash",
         checksummed_hex::encode(v1.hash().inner()).to_string(),
     ));
+
+    let meta = TransactionV1Meta::deserialize_from(&v1);
+    if let TransactionTarget::Session { module_bytes, .. } = meta.target {
+        // Session transactions with wasm size exceeding 16kb will not display
+        // any extra information due to hardware limitations.
+        if module_bytes.len() > 16_383 {
+            return elements;
+        }
+    }
+
     elements.push(transaction_v1_type(&v1));
     elements.extend(parse_v1_payload(v1.payload()));
     elements.extend(parse_v1_meta(&v1));
